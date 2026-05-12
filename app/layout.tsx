@@ -4,7 +4,7 @@ import "./globals.css";
 
 export const metadata: Metadata = {
   title: "Missions",
-  description: "Phase 0 scaffold for the Missions application.",
+  description: "Missions application with Supabase authentication foundation.",
 };
 
 export default function RootLayout({
