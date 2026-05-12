@@ -2,6 +2,21 @@ import { createClient } from "@/lib/supabase/server";
 import { mapGroup, mapGroupMembership } from "./mappers";
 import type { Group, GroupMembership } from "./types";
 
+type SupabaseQueryError = {
+  code?: string;
+  details?: string;
+  message: string;
+};
+
+function isMissingGroupsSchemaError(error: SupabaseQueryError) {
+  const errorText = [error.message, error.details].filter(Boolean).join(" ");
+
+  return (
+    (error.code === "42P01" || error.code === "PGRST205") &&
+    /(?:public\.)?(?:groups|group_memberships)\b/i.test(errorText)
+  );
+}
+
 export async function listCurrentUserGroups(userId: string): Promise<Group[]> {
   const supabase = await createClient();
   const { data, error } = await supabase
@@ -10,6 +25,10 @@ export async function listCurrentUserGroups(userId: string): Promise<Group[]> {
     .order("created_at", { ascending: false });
 
   if (error) {
+    if (isMissingGroupsSchemaError(error)) {
+      return [];
+    }
+
     throw new Error(`Unable to load groups for user ${userId}: ${error.message}`);
   }
 
