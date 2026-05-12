@@ -1,3 +1,4 @@
+import Link from "next/link";
 import { redirect } from "next/navigation";
 import { signOut } from "@/lib/auth/actions";
 import { getCurrentUserProfile } from "@/lib/profiles/current-profile";
@@ -18,6 +19,9 @@ export default async function AppPage() {
         <h1 id="app-title">Missions app</h1>
         <p className="summary">
           You are signed in{currentProfile.email ? ` as ${currentProfile.email}` : ""}.
+        </p>
+        <p>
+          <Link href="/app/groups">View your groups</Link>
         </p>
         <form action={signOut}>
           <button type="submit">Sign out</button>

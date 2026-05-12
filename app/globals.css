@@ -98,3 +98,115 @@ button {
   font-weight: 700;
   padding: 0.75rem 1rem;
 }
+
+.shell-start {
+  align-items: start;
+  padding-top: 4rem;
+}
+
+.hero-wide {
+  width: min(100%, 56rem);
+  text-align: left;
+}
+
+.hero-wide h1 {
+  font-size: clamp(2.5rem, 8vw, 4.5rem);
+}
+
+.page-header {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1rem;
+  align-items: flex-start;
+  justify-content: space-between;
+}
+
+.summary-left {
+  margin-left: 0;
+}
+
+.button-link,
+.empty-state a {
+  display: inline-block;
+  border-radius: 999px;
+  background: var(--foreground);
+  color: var(--card);
+  font-weight: 700;
+  padding: 0.75rem 1rem;
+  text-decoration: none;
+}
+
+.card-list {
+  display: grid;
+  gap: 1rem;
+  margin: 2rem 0 0;
+  padding: 0;
+  list-style: none;
+}
+
+.list-card,
+.empty-state,
+.detail-list {
+  border: 1px solid var(--border);
+  border-radius: 1rem;
+  padding: 1rem;
+}
+
+.list-card a {
+  display: grid;
+  gap: 0.25rem;
+  color: var(--foreground);
+  font-weight: 800;
+  text-decoration: none;
+}
+
+.list-card small,
+.list-card p,
+.empty-state p,
+.detail-list dt,
+.group-description,
+.secondary-link {
+  color: var(--muted);
+}
+
+.list-card p,
+.empty-state p,
+.secondary-link {
+  margin-bottom: 0;
+}
+
+.auth-form textarea {
+  border: 1px solid var(--border);
+  border-radius: 0.75rem;
+  color: var(--foreground);
+  font: inherit;
+  padding: 0.75rem 1rem;
+  resize: vertical;
+}
+
+.form-message {
+  color: #b91c1c;
+  font-weight: 700;
+  text-align: center;
+}
+
+.detail-list {
+  display: grid;
+  gap: 1rem;
+  margin: 2rem 0 0;
+}
+
+.detail-list div {
+  display: flex;
+  justify-content: space-between;
+  gap: 1rem;
+}
+
+.detail-list dt,
+.detail-list dd {
+  margin: 0;
+}
+
+.detail-list dd {
+  font-weight: 800;
+}
