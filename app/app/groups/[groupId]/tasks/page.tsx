@@ -3,6 +3,7 @@ import { notFound, redirect } from "next/navigation";
 import { getCurrentUser } from "@/lib/auth/current-user";
 import { getGroupByIdForUser } from "@/lib/groups/queries";
 import { archiveTask } from "@/lib/tasks/actions";
+import { getTaskIconEmoji, getTaskVerificationLabel } from "@/lib/tasks/constants";
 import { userCanManageGroupTasks } from "@/lib/tasks/permissions";
 import { getGroupTasks } from "@/lib/tasks/queries";
 
@@ -58,37 +59,56 @@ export default async function GroupTasksPage({
             {tasks.map((task) => {
               const canArchiveTask = canManageTasks || task.createdByUserId === user.id;
 
+              const iconEmoji = getTaskIconEmoji(task.iconKey);
+
               return (
-              <li key={task.id} className="list-card task-card">
-                <div>
-                  <strong>{task.title}</strong>
-                  {task.category ? <small>{task.category}</small> : null}
-                </div>
-                {task.description ? <p>{task.description}</p> : null}
-                <dl className="task-meta">
-                  <div>
-                    <dt>Default unit</dt>
-                    <dd>{task.defaultUnit}</dd>
+                <li key={task.id} className="list-card task-card">
+                  <div className="task-card-header">
+                    {task.imageUrl ? (
+                      <span
+                        aria-label={`${task.title} custom image preview`}
+                        className="task-image-preview"
+                        role="img"
+                        style={{ backgroundImage: `url(${task.imageUrl})` }}
+                      />
+                    ) : null}
+                    {iconEmoji ? (
+                      <span aria-hidden="true" className="task-icon">
+                        {iconEmoji}
+                      </span>
+                    ) : null}
+                    <div>
+                      <strong>{task.title}</strong>
+                      {task.category ? <small>{task.category}</small> : null}
+                    </div>
                   </div>
-                  <div>
-                    <dt>Default quantity</dt>
-                    <dd>{task.defaultQuantity ?? "None"}</dd>
-                  </div>
-                  <div>
-                    <dt>Verification</dt>
-                    <dd>{task.verificationType.replaceAll("_", " ")}</dd>
-                  </div>
-                </dl>
-                {canArchiveTask ? (
-                  <form action={archiveTask} className="inline-form">
-                    <input type="hidden" name="groupId" value={group.id} />
-                    <input type="hidden" name="taskId" value={task.id} />
-                    <button type="submit" className="secondary-button">
-                      Archive
-                    </button>
-                  </form>
-                ) : null}
-              </li>
+                  {task.description ? <p>{task.description}</p> : null}
+                  <dl className="task-meta">
+                    <div>
+                      <dt>Category</dt>
+                      <dd>{task.category ?? "None"}</dd>
+                    </div>
+                    <div>
+                      <dt>Unit</dt>
+                      <dd>
+                        {task.defaultQuantity ? `${task.defaultQuantity} ${task.defaultUnit}` : task.defaultUnit}
+                      </dd>
+                    </div>
+                    <div>
+                      <dt>Verification</dt>
+                      <dd>{getTaskVerificationLabel(task.verificationType)}</dd>
+                    </div>
+                  </dl>
+                  {canArchiveTask ? (
+                    <form action={archiveTask} className="inline-form">
+                      <input type="hidden" name="groupId" value={group.id} />
+                      <input type="hidden" name="taskId" value={task.id} />
+                      <button type="submit" className="secondary-button">
+                        Archive
+                      </button>
+                    </form>
+                  ) : null}
+                </li>
               );
             })}
           </ul>

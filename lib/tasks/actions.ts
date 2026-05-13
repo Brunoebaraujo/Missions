@@ -4,10 +4,18 @@ import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 import { getGroupMembership } from "@/lib/groups/queries";
 import { createClient } from "@/lib/supabase/server";
+import {
+  DEFAULT_TASK_UNIT,
+  DEFAULT_TASK_VERIFICATION_TYPE,
+  TASK_ICON_OPTIONS,
+  TASK_UNIT_OPTIONS,
+  TASK_VERIFICATION_OPTIONS,
+} from "./constants";
 import { userCanManageGroupTasks } from "./permissions";
-import type { VerificationType } from "./types";
+import type { DefaultUnit, IconKey, VerificationType } from "./types";
 
-const ALLOWED_VERIFICATION_TYPES: VerificationType[] = ["self_report"];
+const ALLOWED_ICON_KEYS = TASK_ICON_OPTIONS.map((icon) => icon.value);
+const ALLOWED_VERIFICATION_TYPES = TASK_VERIFICATION_OPTIONS.map((option) => option.value);
 
 function getFormValue(formData: FormData, key: string) {
   const value = formData.get(key);
@@ -33,14 +41,34 @@ function parseOptionalQuantity(value: string) {
   return quantity;
 }
 
+function parseOptionalUrl(value: string) {
+  if (!value) {
+    return null;
+  }
+
+  try {
+    const url = new URL(value);
+
+    if (url.protocol !== "http:" && url.protocol !== "https:") {
+      return null;
+    }
+
+    return url.toString();
+  } catch {
+    return null;
+  }
+}
+
 export async function createTask(formData: FormData) {
   const groupId = getFormValue(formData, "groupId");
   const title = getFormValue(formData, "title");
   const description = getFormValue(formData, "description");
   const category = getFormValue(formData, "category");
-  const defaultUnit = getFormValue(formData, "default_unit");
+  const defaultUnitValue = getFormValue(formData, "default_unit") || DEFAULT_TASK_UNIT;
   const defaultQuantityValue = getFormValue(formData, "default_quantity");
-  const verificationType = getFormValue(formData, "verification_type") as VerificationType;
+  const verificationTypeValue = getFormValue(formData, "verification_type") || DEFAULT_TASK_VERIFICATION_TYPE;
+  const iconKeyValue = getFormValue(formData, "icon_key");
+  const imageUrlValue = getFormValue(formData, "image_url");
   const newTaskPath = `/app/groups/${groupId}/tasks/new`;
 
   if (!groupId) {
@@ -59,9 +87,11 @@ export async function createTask(formData: FormData) {
     redirectWithMessage(newTaskPath, "Category must be 80 characters or fewer.");
   }
 
-  if (defaultUnit.length < 1 || defaultUnit.length > 40) {
-    redirectWithMessage(newTaskPath, "Default unit must be between 1 and 40 characters.");
+  if (!TASK_UNIT_OPTIONS.includes(defaultUnitValue as DefaultUnit)) {
+    redirectWithMessage(newTaskPath, "Choose one of the available unit options.");
   }
+
+  const defaultUnit = defaultUnitValue as DefaultUnit;
 
   const defaultQuantity = parseOptionalQuantity(defaultQuantityValue);
 
@@ -69,8 +99,20 @@ export async function createTask(formData: FormData) {
     redirectWithMessage(newTaskPath, "Default quantity must be a positive number when provided.");
   }
 
-  if (!ALLOWED_VERIFICATION_TYPES.includes(verificationType)) {
-    redirectWithMessage(newTaskPath, "Only self-report verification is available right now.");
+  if (!ALLOWED_VERIFICATION_TYPES.includes(verificationTypeValue as VerificationType)) {
+    redirectWithMessage(newTaskPath, "Choose one of the available verification options.");
+  }
+
+  const verificationType = verificationTypeValue as VerificationType;
+
+  if (iconKeyValue && !ALLOWED_ICON_KEYS.includes(iconKeyValue as IconKey)) {
+    redirectWithMessage(newTaskPath, "Choose one of the available task icons.");
+  }
+
+  const imageUrl = parseOptionalUrl(imageUrlValue);
+
+  if (imageUrlValue && imageUrl === null) {
+    redirectWithMessage(newTaskPath, "Custom image URL must be a valid http or https URL.");
   }
 
   const supabase = await createClient();
@@ -97,6 +139,8 @@ export async function createTask(formData: FormData) {
     default_unit: defaultUnit,
     default_quantity: defaultQuantity,
     verification_type: verificationType,
+    icon_key: iconKeyValue || null,
+    image_url: imageUrl,
   });
 
   if (error) {
