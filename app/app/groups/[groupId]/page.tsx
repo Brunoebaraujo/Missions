@@ -41,8 +41,9 @@ export default async function GroupPage({ params }: GroupPageProps) {
         </dl>
         <p className="group-actions">
           <Link href={`/app/groups/${group.id}/tasks`}>Tasks</Link>
+          <Link href={`/app/groups/${group.id}/missions`}>Missions</Link>
         </p>
-        <p className="group-placeholder">Missions will be added in a later phase.</p>
+        <p className="group-placeholder">Create missions from reusable tasks to define group objectives.</p>
         <p className="secondary-link">
           <Link href="/app/groups">Back to groups</Link>
         </p>
