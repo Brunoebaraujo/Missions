@@ -4,9 +4,11 @@ Minimal scaffold for the Missions web application.
 
 ## Scope
 
-Phase 1 adds the Supabase/Auth foundation only. It includes Supabase client wiring, sign-in/sign-up routes, an auth callback route, sign-out, an authenticated `/app` shell, and a placeholder profile helper based on the current Supabase user.
+Phase 1 adds the Supabase/Auth foundation. It includes Supabase client wiring, sign-in/sign-up routes, an auth callback route, sign-out, an authenticated `/app` shell, and a placeholder profile helper based on the current Supabase user.
 
-This phase intentionally does not include groups, missions, XP, rankings, streaks, templates, rewards, notifications, database schema/migrations, RLS policies, or product UI polish.
+Phase 2 adds the minimal Groups + Memberships foundation. It includes private `groups` and `group_memberships` tables, basic RLS, group creation, a current-user group list, and a basic group detail page.
+
+This phase intentionally does not include missions, XP, rankings, campaigns, streaks, rewards, templates, notifications, invite flows, public discovery, complex dashboards, or product UI polish.
 
 ## Supabase environment variables
 
@@ -18,6 +20,32 @@ NEXT_PUBLIC_SUPABASE_ANON_KEY=your-anon-key
 ```
 
 The auth callback route is available at `/auth/callback`. Configure the equivalent absolute URL in Supabase Auth redirect settings for each deployed environment, for example `http://localhost:3000/auth/callback` locally.
+
+
+## Supabase migrations
+
+Apply migrations before using `/app/groups` in any deployed Supabase project. The Phase 2 schema lives in `supabase/migrations/20260512000000_groups_memberships.sql` and creates:
+
+- `public.groups`
+- `public.group_memberships`
+- indexes, constraints, helper functions, triggers, and minimal RLS policies for active group members
+
+### Apply with the Supabase CLI
+
+```bash
+supabase link --project-ref YOUR_PROJECT_REF
+supabase db push
+```
+
+### Apply manually in the Supabase dashboard
+
+1. Open your Supabase project.
+2. Go to **SQL Editor**.
+3. Open `supabase/migrations/20260512000000_groups_memberships.sql` from this repository.
+4. Paste the full file contents into the SQL editor.
+5. Click **Run**.
+
+If these tables are missing in deployed Supabase, `/app/groups` shows an empty list instead of crashing, but creating and viewing groups requires the migration to be applied.
 
 ## Vercel deployment
 
