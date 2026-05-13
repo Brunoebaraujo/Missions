@@ -6,7 +6,7 @@ create table if not exists public.groups (
   slug text not null unique check (slug ~ '^[a-z0-9]+(-[a-z0-9]+)*$'),
   description text check (description is null or char_length(description) <= 280),
   owner_user_id uuid not null references auth.users(id) on delete cascade,
-  visibility text not null default 'private' check (visibility = 'private'),
+  visibility text not null default 'private' check (visibility in ('private', 'invite_only', 'public')),
   created_at timestamptz not null default now(),
   updated_at timestamptz not null default now()
 );
@@ -16,7 +16,7 @@ create table if not exists public.group_memberships (
   group_id uuid not null references public.groups(id) on delete cascade,
   user_id uuid not null references auth.users(id) on delete cascade,
   role text not null check (role in ('owner', 'admin', 'moderator', 'member')),
-  status text not null default 'active' check (status = 'active'),
+  status text not null default 'active' check (status in ('active', 'invited', 'suspended', 'left')),
   joined_at timestamptz not null default now(),
   created_at timestamptz not null default now(),
   constraint group_memberships_group_id_user_id_key unique (group_id, user_id)

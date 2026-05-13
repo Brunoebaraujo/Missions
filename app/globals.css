@@ -165,6 +165,7 @@ button {
 .empty-state p,
 .detail-list dt,
 .group-description,
+.group-placeholder,
 .secondary-link {
   color: var(--muted);
 }
