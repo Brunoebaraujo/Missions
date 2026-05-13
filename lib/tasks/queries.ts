@@ -10,7 +10,7 @@ export async function getGroupTasks(
   const { data, error } = await supabase
     .from("tasks")
     .select(
-      "id, group_id, created_by_user_id, title, description, category, default_unit, default_quantity, verification_type, is_active, created_at, updated_at",
+      "id, group_id, created_by_user_id, title, description, category, default_unit, default_quantity, verification_type, icon_key, image_url, is_active, created_at, updated_at",
     )
     .eq("group_id", groupId)
     .eq("is_active", true)

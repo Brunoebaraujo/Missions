@@ -24,11 +24,13 @@ The auth callback route is available at `/auth/callback`. Configure the equivale
 
 ## Supabase migrations
 
-Apply migrations before using `/app/groups` in any deployed Supabase project. The Phase 2 schema lives in `supabase/migrations/20260512000000_groups_memberships.sql` and creates:
+Apply migrations before using `/app/groups` or the task library in any deployed Supabase project. The Phase 2 schema lives in `supabase/migrations/20260512000000_groups_memberships.sql` and creates:
 
 - `public.groups`
 - `public.group_memberships`
 - indexes, constraints, helper functions, triggers, and minimal RLS policies for active group members
+
+The tasks foundation migrations live in `supabase/migrations/20260513000200_tasks_foundation.sql` and `supabase/migrations/20260513000300_task_visual_identity_verification.sql`. They create the reusable `public.tasks` table, task RLS policies, the task visual identity fields (`icon_key`, `image_url`), and the verification type constraint used by the task form.
 
 ### Apply with the Supabase CLI
 
@@ -41,9 +43,9 @@ supabase db push
 
 1. Open your Supabase project.
 2. Go to **SQL Editor**.
-3. Open `supabase/migrations/20260512000000_groups_memberships.sql` from this repository.
-4. Paste the full file contents into the SQL editor.
-5. Click **Run**.
+3. Open each migration file from this repository in timestamp order, including `supabase/migrations/20260513000200_tasks_foundation.sql` and `supabase/migrations/20260513000300_task_visual_identity_verification.sql` for task definitions.
+4. Paste one full migration file at a time into the SQL editor.
+5. Click **Run** after each file completes before pasting the next migration.
 
 If these tables are missing in deployed Supabase, `/app/groups` shows an empty list instead of crashing, but creating and viewing groups requires the migration to be applied.
 
