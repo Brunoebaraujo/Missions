@@ -1,7 +1,7 @@
 import Link from "next/link";
 import { notFound, redirect } from "next/navigation";
 import { getCurrentUser } from "@/lib/auth/current-user";
-import { getCurrentUserGroup, getGroupMembership } from "@/lib/groups/queries";
+import { getGroupById, getGroupMembership } from "@/lib/groups/queries";
 import { hasGroupRole, isGroupMember } from "@/lib/groups/rbac";
 
 type GroupPageProps = {
@@ -19,7 +19,7 @@ export default async function GroupPage({ params }: GroupPageProps) {
 
   const { groupId } = await params;
   const [group, membership] = await Promise.all([
-    getCurrentUserGroup(groupId, user.id),
+    getGroupById(groupId, user.id),
     getGroupMembership(groupId, user.id),
   ]);
 

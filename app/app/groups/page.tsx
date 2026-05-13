@@ -1,7 +1,7 @@
 import Link from "next/link";
 import { redirect } from "next/navigation";
 import { getCurrentUser } from "@/lib/auth/current-user";
-import { listCurrentUserGroups } from "@/lib/groups/queries";
+import { getUserGroups } from "@/lib/groups/queries";
 
 export default async function GroupsPage() {
   const user = await getCurrentUser();
@@ -10,7 +10,7 @@ export default async function GroupsPage() {
     redirect("/sign-in");
   }
 
-  const groups = await listCurrentUserGroups(user.id);
+  const groups = await getUserGroups(user.id);
 
   return (
     <main className="shell shell-start">
@@ -23,6 +23,7 @@ export default async function GroupsPage() {
               Groups define the tenant boundary for future work.
             </p>
           </div>
+          <Link href="/app/groups/new">Create group</Link>
         </div>
 
         {groups.length > 0 ? (
@@ -40,7 +41,10 @@ export default async function GroupsPage() {
         ) : (
           <div className="empty-state">
             <p>No groups yet.</p>
-            <p>Groups will be available in the next phase.</p>
+            <p>Create your first group to start the Phase 2 foundation.</p>
+            <p>
+              <Link href="/app/groups/new">Create group</Link>
+            </p>
           </div>
         )}
       </section>

@@ -17,7 +17,7 @@ function isMissingGroupsSchemaError(error: SupabaseQueryError) {
   );
 }
 
-export async function listCurrentUserGroups(userId: string): Promise<Group[]> {
+export async function getUserGroups(userId: string): Promise<Group[]> {
   const supabase = await createClient();
   const { data, error } = await supabase
     .from("groups")
@@ -35,7 +35,7 @@ export async function listCurrentUserGroups(userId: string): Promise<Group[]> {
   return (data ?? []).map(mapGroup);
 }
 
-export async function getCurrentUserGroup(
+export async function getGroupById(
   groupId: string,
   userId: string,
 ): Promise<Group | null> {
@@ -71,3 +71,6 @@ export async function getGroupMembership(
 
   return data ? mapGroupMembership(data) : null;
 }
+
+export const listCurrentUserGroups = getUserGroups;
+export const getCurrentUserGroup = getGroupById;
