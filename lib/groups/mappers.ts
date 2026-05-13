@@ -1,4 +1,10 @@
-import type { Group, GroupMembership, MembershipRole, MembershipStatus } from "./types";
+import type {
+  Group,
+  GroupMembership,
+  GroupVisibility,
+  MembershipRole,
+  MembershipStatus,
+} from "./types";
 
 type GroupRow = {
   id: string;
@@ -6,7 +12,7 @@ type GroupRow = {
   slug: string;
   description: string | null;
   owner_user_id: string;
-  visibility: "private";
+  visibility: GroupVisibility;
   created_at: string;
   updated_at: string;
 };

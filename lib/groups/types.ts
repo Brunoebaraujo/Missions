@@ -1,8 +1,8 @@
 export type MembershipRole = "owner" | "admin" | "moderator" | "member";
 
-export type MembershipStatus = "active";
+export type MembershipStatus = "active" | "invited" | "suspended" | "left";
 
-export type GroupVisibility = "private";
+export type GroupVisibility = "private" | "invite_only" | "public";
 
 export type Group = {
   id: string;
