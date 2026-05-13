@@ -39,6 +39,9 @@ export default async function GroupPage({ params }: GroupPageProps) {
             <dd>{membership.role}</dd>
           </div>
         </dl>
+        <p className="group-actions">
+          <Link href={`/app/groups/${group.id}/tasks`}>Tasks</Link>
+        </p>
         <p className="group-placeholder">Missions will be added in a later phase.</p>
         <p className="secondary-link">
           <Link href="/app/groups">Back to groups</Link>
